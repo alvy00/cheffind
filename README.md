@@ -52,3 +52,9 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 3. Environment Variables
+
+```bash
+NEXT_PUBLIC_GEMINI_API_KEY=your_google_gemini_api_key
+```

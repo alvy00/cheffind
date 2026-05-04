@@ -8,3 +8,9 @@ export interface Chef {
     pricePerSession: number;
     opinion: string;
 }
+
+export interface FieldProps {
+    label: string;
+    children: React.ReactNode;
+    error?: string;
+}

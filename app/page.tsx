@@ -38,7 +38,7 @@ export default function Home() {
                             fontWeight: 600,
                         }}
                     >
-                        Your table, your rules.
+                        Chef <span className="text-orange-400">Find</span>
                     </h1>
                     <p
                         className="text-sm max-w-sm"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CUISINES = [
     "Bengali",
@@ -40,12 +41,11 @@ export default function CustomerForm() {
     const [activeDot, setActiveDot] = useState(0);
     const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle");
 
-    // Auto-cycle dish when no cuisine selected
     useEffect(() => {
         if (form.cuisine) return;
         const timer = setInterval(() => {
             setActiveDot((prev) => (prev + 1) % CUISINES.length);
-        }, 2400);
+        }, 2800);
         return () => clearInterval(timer);
     }, [form.cuisine]);
 
@@ -68,272 +68,266 @@ export default function CustomerForm() {
             return;
         }
         setSubmitStatus("success");
-        // TODO: proceed to Step 2 / call your API here
-        console.log("Form submitted:", form);
-    };
-
-    const handleClear = () => {
-        setForm({ cuisine: "", meal: "", guests: "", budget: "", special: "" });
-        setActiveDot(0);
-        setSubmitStatus("idle");
     };
 
     return (
-        <div className="font-sans grid grid-cols-1 md:grid-cols-2 min-h-[580px] rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="font-sans grid grid-cols-1 md:grid-cols-2 min-h-[600px] rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-2xl shadow-orange-900/10"
+        >
             {/* ── Visual Panel ── */}
             <div
-                className="relative flex flex-col justify-end p-8 overflow-hidden"
+                className="relative flex flex-col justify-end p-6 md:p-10 overflow-hidden"
                 style={{ background: "#1a0f00" }}
             >
-                {/* Ambient glow */}
-                <div
+                <motion.div
+                    animate={{
+                        scale: [1, 1.1, 1],
+                        opacity: [0.3, 0.5, 0.3],
+                    }}
+                    transition={{ duration: 8, repeat: Infinity }}
                     className="absolute inset-0 pointer-events-none"
                     style={{
                         background:
-                            "radial-gradient(ellipse at 30% 20%, #3d1f00 0%, #1a0f00 60%)",
+                            "radial-gradient(circle at 30% 20%, #4d2600 0%, #1a0f00 70%)",
                     }}
                 />
 
-                {/* Decorative circles */}
-                <div className="absolute top-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10">
-                    {/* Plate */}
-                    <div
-                        className="w-28 h-28 rounded-full flex items-center justify-center"
-                        style={{
-                            background: "#2d1800",
-                            border: "3px solid #5a3010",
-                        }}
-                    >
-                        <div
-                            className="w-20 h-20 rounded-full flex items-center justify-center text-4xl"
+                {/* Dish Icon Section - HIDDEN ON MOBILE (hidden), FLEX ON DESKTOP (md:flex) */}
+                <div className="hidden md:flex absolute top-20 left-1/2 -translate-x-1/2 flex-col items-center gap-6 z-10">
+                    <div className="relative">
+                        <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{
+                                duration: 20,
+                                repeat: Infinity,
+                                ease: "linear",
+                            }}
+                            className="w-32 h-32 rounded-full absolute -inset-1 opacity-20"
+                            style={{ border: "2px dashed #e89040" }}
+                        />
+                        <motion.div
+                            className="w-28 h-28 rounded-full flex items-center justify-center relative z-10"
                             style={{
-                                background: "#3a2008",
-                                border: "1.5px solid #7a4a20",
+                                background: "#2d1800",
+                                border: "4px solid #5a3010",
+                                boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
                             }}
                         >
-                            {DISH_ICONS[activeDot]}
-                        </div>
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={activeDot}
+                                    initial={{
+                                        scale: 0,
+                                        rotate: -10,
+                                        opacity: 0,
+                                    }}
+                                    animate={{
+                                        scale: 1,
+                                        rotate: 0,
+                                        opacity: 1,
+                                    }}
+                                    exit={{ scale: 0.5, opacity: 0 }}
+                                    className="text-5xl"
+                                >
+                                    {DISH_ICONS[activeDot]}
+                                </motion.div>
+                            </AnimatePresence>
+                        </motion.div>
                     </div>
 
-                    {/* Dot indicators */}
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-2">
                         {CUISINES.map((_, i) => (
-                            <button
+                            <motion.div
                                 key={i}
-                                onClick={() => setActiveDot(i)}
-                                className="w-1.5 h-1.5 rounded-full transition-opacity"
-                                style={{
-                                    background: "#e89040",
-                                    opacity: i === activeDot ? 1 : 0.35,
+                                animate={{
+                                    scale: i === activeDot ? 1.2 : 1,
+                                    backgroundColor:
+                                        i === activeDot ? "#e89040" : "#4d2600",
                                 }}
-                                aria-label={`Show ${CUISINES[i]}`}
+                                className="w-2 h-2 rounded-full cursor-pointer"
+                                onClick={() => setActiveDot(i)}
                             />
                         ))}
                     </div>
                 </div>
 
-                {/* Bottom copy */}
                 <div className="relative z-10">
-                    <span
-                        className="inline-block text-[10px] tracking-widest uppercase font-medium px-2.5 py-1 rounded-full mb-2.5"
-                        style={{
-                            background: "rgba(196,122,48,0.2)",
-                            color: "#e89040",
-                            border: "0.5px solid rgba(196,122,48,0.4)",
-                        }}
+                    <motion.span
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="inline-block text-[10px] tracking-[0.2em] uppercase font-bold px-3 py-1 rounded-md mb-4 bg-orange-500/10 text-orange-400 border border-orange-500/20"
                     >
                         Chef&apos;s Table
-                    </span>
-
-                    <h2
-                        className="text-2xl leading-snug mb-2"
-                        style={{
-                            fontFamily: "'Georgia', 'Times New Roman', serif",
-                            color: "#f5ece0",
-                            fontWeight: 600,
-                        }}
+                    </motion.span>
+                    <motion.h2
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-2xl md:text-3xl font-serif font-semibold text-[#f5ece0] leading-tight mb-3"
                     >
-                        Curate your
-                        <br />
-                        perfect meal
-                    </h2>
-
-                    <p
-                        className="text-sm mb-5"
-                        style={{
-                            color: "rgba(245,236,224,0.55)",
-                            lineHeight: 1.6,
-                        }}
+                        Curate your <br /> perfect meal
+                    </motion.h2>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="text-sm text-[#f5ece0]/50 mb-4 md:mb-6 max-w-[240px]"
                     >
-                        From intimate gatherings to grand celebrations — crafted
-                        to your taste.
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5">
-                        {[
-                            "Customisable menu",
-                            "Home service",
-                            "Party catering",
-                        ].map((tag) => (
-                            <span
-                                key={tag}
-                                className="text-[11px] px-2.5 py-1 rounded-full"
-                                style={{
-                                    background: "rgba(255,255,255,0.06)",
-                                    color: "rgba(245,236,224,0.65)",
-                                    border: "0.5px solid rgba(255,255,255,0.1)",
-                                }}
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
+                        Hand-picked ingredients, professional mastery, served at
+                        your home.
+                    </motion.p>
                 </div>
             </div>
 
             {/* ── Form Panel ── */}
-            <div className="bg-white dark:bg-neutral-900 p-7 flex flex-col gap-0">
-                {/* Header */}
-                <div className="mb-5">
-                    <p
-                        className="text-[10px] tracking-widest uppercase font-medium mb-1"
-                        style={{ color: "#c47a30" }}
-                    >
-                        Step 1 of 3
-                    </p>
-                    <h2
-                        className="text-xl leading-snug text-neutral-900 dark:text-neutral-100"
-                        style={{
-                            fontFamily: "'Georgia', 'Times New Roman', serif",
-                            fontWeight: 600,
-                        }}
-                    >
+            <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 flex flex-col">
+                <div className="mb-6 md:mb-8">
+                    <div className="flex justify-between items-end mb-2">
+                        <span className="text-[10px] tracking-widest uppercase font-bold text-orange-600">
+                            Step 1 of 3
+                        </span>
+                        <div className="flex gap-1">
+                            <div className="w-8 h-1 rounded-full bg-orange-500" />
+                            <div className="w-8 h-1 rounded-full bg-neutral-100 dark:bg-neutral-800" />
+                            <div className="w-8 h-1 rounded-full bg-neutral-100 dark:bg-neutral-800" />
+                        </div>
+                    </div>
+                    <h2 className="text-xl md:text-2xl font-serif font-semibold dark:text-white">
                         Your preferences
                     </h2>
-                    <p className="text-xs text-neutral-500 mt-1">
-                        Help us match you with the right chef.
-                    </p>
                 </div>
 
-                <div className="h-px bg-neutral-100 dark:bg-neutral-800 mb-5" />
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <Field label="Cuisine" delay={0.1}>
+                            <Select
+                                value={form.cuisine}
+                                onChange={handleCuisineChange}
+                                placeholder="Select"
+                                options={[...CUISINES]}
+                            />
+                        </Field>
+                        <Field label="Meal Type" delay={0.2}>
+                            <Select
+                                value={form.meal}
+                                onChange={(v) => handleChange("meal", v)}
+                                placeholder="Select"
+                                options={[...MEAL_TYPES]}
+                            />
+                        </Field>
+                    </div>
 
-                {/* Row 1 */}
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                    <Field label="Cuisine preference">
-                        <Select
-                            value={form.cuisine}
-                            onChange={(v) => handleCuisineChange(v)}
-                            placeholder="Select cuisine"
-                            options={[...CUISINES]}
-                        />
-                    </Field>
-                    <Field label="Meal type">
-                        <Select
-                            value={form.meal}
-                            onChange={(v) => handleChange("meal", v)}
-                            placeholder="Select type"
-                            options={[...MEAL_TYPES]}
+                    <div className="grid grid-cols-2 gap-4">
+                        <Field label="Guests" delay={0.3}>
+                            <Select
+                                value={form.guests}
+                                onChange={(v) => handleChange("guests", v)}
+                                placeholder="Range"
+                                options={[...GUEST_OPTIONS]}
+                            />
+                        </Field>
+                        <Field label="Budget" delay={0.4}>
+                            <Select
+                                value={form.budget}
+                                onChange={(v) => handleChange("budget", v)}
+                                placeholder="Amount"
+                                options={[...BUDGET_OPTIONS]}
+                            />
+                        </Field>
+                    </div>
+
+                    <Field label="Special Requests" delay={0.5}>
+                        <textarea
+                            value={form.special}
+                            onChange={(e) =>
+                                handleChange("special", e.target.value)
+                            }
+                            placeholder="Allergies, themes, or specific dishes..."
+                            rows={4}
+                            className="w-full text-sm p-4 text-white rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none resize-none"
                         />
                     </Field>
                 </div>
 
-                {/* Row 2 */}
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                    <Field label="Number of guests">
-                        <Select
-                            value={form.guests}
-                            onChange={(v) => handleChange("guests", v)}
-                            placeholder="Select range"
-                            options={[...GUEST_OPTIONS]}
-                        />
-                    </Field>
-                    <Field label="Budget per session">
-                        <Select
-                            value={form.budget}
-                            onChange={(v) => handleChange("budget", v)}
-                            placeholder="Select budget"
-                            options={[...BUDGET_OPTIONS]}
-                        />
-                    </Field>
-                </div>
-
-                {/* Special requests */}
-                <Field label="Special requests" className="mb-4">
-                    <textarea
-                        value={form.special}
-                        onChange={(e) =>
-                            handleChange("special", e.target.value)
-                        }
-                        placeholder="e.g. Birthday dinner, no beef, nut allergy..."
-                        rows={3}
-                        className="w-full text-[13px] px-3 py-2 rounded-lg resize-none outline-none transition-all
-              bg-neutral-50 dark:bg-neutral-800
-              border border-neutral-200 dark:border-neutral-700
-              text-neutral-900 dark:text-neutral-100
-              placeholder:text-neutral-400
-              focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10"
-                    />
-                </Field>
-
-                {/* Actions */}
-                <div className="flex gap-2 mt-auto">
-                    <button
-                        onClick={handleClear}
-                        className="px-4 py-2 text-[13px] rounded-lg border border-neutral-200 dark:border-neutral-700
-              text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800
-              transition-colors"
+                <div className="mt-8 flex gap-3">
+                    <motion.button
+                        whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                            setForm({
+                                cuisine: "",
+                                meal: "",
+                                guests: "",
+                                budget: "",
+                                special: "",
+                            });
+                            setSubmitStatus("idle");
+                        }}
+                        className="px-4 md:px-6 py-3 text-sm font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 dark:text-white"
                     >
-                        Clear
-                    </button>
-                    <button
+                        Reset
+                    </motion.button>
+                    <motion.button
+                        whileHover={{ scale: 1.02, backgroundColor: "#a86428" }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={handleSubmit}
-                        className="flex-1 py-2 text-[13px] font-medium rounded-lg text-white transition-all active:scale-[0.98]"
-                        style={{ background: "#c47a30" }}
-                        onMouseEnter={(e) =>
-                            (e.currentTarget.style.background = "#a86428")
-                        }
-                        onMouseLeave={(e) =>
-                            (e.currentTarget.style.background = "#c47a30")
-                        }
+                        className="flex-1 py-3 rounded-xl bg-[#c47a30] text-white font-semibold text-sm shadow-lg shadow-orange-900/20"
                     >
-                        Continue to Step 2 →
-                    </button>
+                        Find Chef
+                    </motion.button>
                 </div>
 
-                {/* Status message */}
-                {submitStatus === "success" && (
-                    <div className="mt-3 text-[12px] text-center py-2 px-3 rounded-lg bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
-                        ✓ Details saved! Proceeding to chef selection…
-                    </div>
-                )}
-                {submitStatus === "error" && (
-                    <div className="mt-3 text-[12px] text-center py-2 px-3 rounded-lg bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300">
-                        Please fill in all required fields.
-                    </div>
-                )}
+                <AnimatePresence>
+                    {submitStatus !== "idle" && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                            animate={{
+                                opacity: 1,
+                                height: "auto",
+                                marginTop: 16,
+                            }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className={`p-3 rounded-xl text-center text-xs font-medium ${
+                                submitStatus === "success"
+                                    ? "bg-green-500/10 text-green-600"
+                                    : "bg-red-500/10 text-red-600"
+                            }`}
+                        >
+                            {submitStatus === "success"
+                                ? "✓ Preferences saved. Loading chefs..."
+                                : "⚠ Please complete all required fields."}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-        </div>
+        </motion.div>
     );
 }
-
-/* ── Sub-components ── */
 
 function Field({
     label,
     children,
-    className = "",
+    delay = 0,
 }: {
     label: string;
     children: React.ReactNode;
-    className?: string;
+    delay?: number;
 }) {
     return (
-        <div className={`flex flex-col gap-1.5 ${className}`}>
-            <label className="text-[11px] font-medium tracking-wide text-neutral-500 dark:text-neutral-400">
+        <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay }}
+            className="flex flex-col gap-1.5"
+        >
+            <label className="text-[10px] uppercase tracking-widest font-bold text-neutral-400 dark:text-neutral-500 ml-1">
                 {label}
             </label>
             {children}
-        </div>
+        </motion.div>
     );
 }
 
@@ -349,28 +343,38 @@ function Select({
     options: string[];
 }) {
     return (
-        <select
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="w-full text-[13px] px-3 py-2 rounded-lg outline-none transition-all appearance-none cursor-pointer
-        bg-neutral-50 dark:bg-neutral-800
-        border border-neutral-200 dark:border-neutral-700
-        text-neutral-900 dark:text-neutral-100
-        focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10"
-            style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 10px center",
-            }}
-        >
-            <option value="" disabled>
-                {placeholder}
-            </option>
-            {options.map((opt) => (
-                <option key={opt} value={opt}>
-                    {opt}
+        <div className="relative group">
+            <select
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="w-full text-sm pl-4 pr-10 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 appearance-none cursor-pointer focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none dark:text-white"
+            >
+                <option value="" disabled>
+                    {placeholder}
                 </option>
-            ))}
-        </select>
+                {options.map((opt) => (
+                    <option key={opt} value={opt}>
+                        {opt}
+                    </option>
+                ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400 group-focus-within:text-orange-500 transition-colors">
+                <svg
+                    width="12"
+                    height="8"
+                    viewBox="0 0 12 8"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M1 1.5L6 6.5L11 1.5"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                </svg>
+            </div>
+        </div>
     );
 }

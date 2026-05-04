@@ -4,11 +4,9 @@ import Background from "./Background";
 export default function FSLoader() {
     return (
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0d0800]">
-            {/* Reuse your background for consistency */}
             <Background />
 
             <div className="relative flex flex-col items-center gap-6">
-                {/* Animated Logo/Brand Name */}
                 <h2
                     className="text-4xl sm:text-5xl animate-pulse tracking-widest"
                     style={{
@@ -17,10 +15,9 @@ export default function FSLoader() {
                         filter: "drop-shadow(0 0 8px rgba(180,90,20,0.4))",
                     }}
                 >
-                    SAVOR
+                    ChefFind
                 </h2>
 
-                {/* Minimalist Progress Bar */}
                 <div className="w-48 h-[1px] bg-white/5 overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b45a14] to-transparent animate-shimmer" />
                 </div>

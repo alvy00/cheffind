@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
-// app/page.tsx
+
 "use client";
+import ChefResults from "@/components/ChefResults";
 import CustomerForm from "@/components/CustomerForm";
 import Background from "@/components/misc/Background";
 import FSLoader from "@/components/misc/FSLoader";
 import { useEffect, useState } from "react";
+import { CHEFS } from "@/lib/constants";
 
 export default function Home() {
     const [loading, setLoading] = useState(true);
+    const [showResults, setShowResults] = useState(false);
+    const [chefData, setChefData] = useState<any>(null);
 
     useEffect(() => {
         const hasSeenLoader = sessionStorage.getItem("hasSeenLoader");
@@ -22,6 +27,15 @@ export default function Home() {
             return () => clearTimeout(timer);
         }
     }, []);
+
+    const handleFormSubmit = async (formData: any) => {
+        try {
+            setChefData({ results: "Successful match!" });
+            setShowResults(true);
+        } catch (error) {
+            console.error("Submission failed", error);
+        }
+    };
 
     if (loading) return <FSLoader />;
     return (
@@ -52,7 +66,14 @@ export default function Home() {
                     </p>
                 </div>
 
-                <CustomerForm />
+                {!showResults ? (
+                    <CustomerForm onSubmitSuccess={handleFormSubmit} />
+                ) : (
+                    <ChefResults
+                        data={chefData}
+                        onBack={() => setShowResults(false)}
+                    />
+                )}
             </div>
         </main>
     );

@@ -12,6 +12,7 @@ import {
     GUEST_OPTIONS,
     MEAL_TYPES,
 } from "@/lib/constants";
+import { ProgressLoader } from "./misc/ProgressLoader";
 
 type FormValues = {
     cuisine: string;
@@ -59,7 +60,7 @@ export default function CustomerForm({
     }, [selectedCuisine]);
 
     const onSubmit = async (data: FormValues) => {
-        onSubmitSuccess(data);
+        await onSubmitSuccess(data);
         console.log("Form Submitted Successfully:", data);
     };
 
@@ -138,117 +139,142 @@ export default function CustomerForm({
             </div>
 
             {/* ── Form Panel (Right) ── */}
-            <div className="p-6 md:p-8 flex flex-col overflow-y-auto">
-                <header className="mb-6">
-                    <span className="text-[10px] tracking-widest uppercase font-bold text-orange-600">
-                        Step 1 of 3
-                    </span>
-                    <h2 className="text-xl md:text-2xl font-serif font-semibold dark:text-white">
-                        Your preferences
-                    </h2>
-                </header>
+            <div className="relative p-6 md:p-8 flex flex-col overflow-hidden">
+                <AnimatePresence>
+                    {isSubmitting && <ProgressLoader />}
+                </AnimatePresence>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                    <div className="grid grid-cols-2 gap-4">
-                        <Field label="Cuisine" error={errors.cuisine?.message}>
-                            <Controller
-                                name="cuisine"
-                                control={control}
-                                rules={{ required: "Select a cuisine" }}
-                                render={({ field }) => (
-                                    <CustomSelect
-                                        {...field}
-                                        placeholder="Select"
-                                        options={[...CUISINES]}
-                                    />
-                                )}
+                {/* Conditional Blur Container */}
+                <div
+                    className={`flex flex-col h-full transition-all duration-500 overflow-y-auto ${
+                        isSubmitting
+                            ? "blur-md grayscale-[0.5] opacity-40 scale-[0.98] pointer-events-none"
+                            : "blur-0 grayscale-0 opacity-100 scale-100"
+                    }`}
+                >
+                    <header className="mb-6">
+                        <h2 className="text-xl md:text-2xl font-serif font-semibold dark:text-white">
+                            Your preferences
+                        </h2>
+                    </header>
+
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-5"
+                    >
+                        <div className="grid grid-cols-2 gap-4">
+                            <Field
+                                label="Cuisine"
+                                error={errors.cuisine?.message}
+                            >
+                                <Controller
+                                    name="cuisine"
+                                    control={control}
+                                    rules={{ required: "Select a cuisine" }}
+                                    render={({ field }) => (
+                                        <CustomSelect
+                                            {...field}
+                                            placeholder="Select"
+                                            options={[...CUISINES]}
+                                        />
+                                    )}
+                                />
+                            </Field>
+
+                            <Field
+                                label="Meal Type"
+                                error={errors.meal?.message}
+                            >
+                                <Controller
+                                    name="meal"
+                                    control={control}
+                                    rules={{ required: "Select a meal type" }}
+                                    render={({ field }) => (
+                                        <CustomSelect
+                                            {...field}
+                                            placeholder="Select"
+                                            options={MEAL_TYPES}
+                                        />
+                                    )}
+                                />
+                            </Field>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <Field
+                                label="Guests"
+                                error={errors.guests?.message}
+                            >
+                                <Controller
+                                    name="guests"
+                                    control={control}
+                                    rules={{ required: "Required" }}
+                                    render={({ field }) => (
+                                        <CustomSelect
+                                            {...field}
+                                            placeholder="Range"
+                                            options={GUEST_OPTIONS}
+                                        />
+                                    )}
+                                />
+                            </Field>
+
+                            <Field
+                                label="Budget"
+                                error={errors.budget?.message}
+                            >
+                                <Controller
+                                    name="budget"
+                                    control={control}
+                                    rules={{ required: "Required" }}
+                                    render={({ field }) => (
+                                        <CustomSelect
+                                            {...field}
+                                            placeholder="Amount"
+                                            options={BUDGET_OPTIONS}
+                                        />
+                                    )}
+                                />
+                            </Field>
+                        </div>
+
+                        <Field label="Special Requests">
+                            <textarea
+                                {...register("special")}
+                                placeholder="Allergies, themes..."
+                                rows={3}
+                                className="w-full text-sm p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none resize-none dark:text-white"
                             />
                         </Field>
 
-                        <Field label="Meal Type" error={errors.meal?.message}>
-                            <Controller
-                                name="meal"
-                                control={control}
-                                rules={{ required: "Select a meal type" }}
-                                render={({ field }) => (
-                                    <CustomSelect
-                                        {...field}
-                                        placeholder="Select"
-                                        options={MEAL_TYPES}
-                                    />
-                                )}
-                            />
-                        </Field>
-                    </div>
+                        <div className="pt-2 flex gap-3">
+                            <button
+                                type="button"
+                                onClick={() => reset()}
+                                className="px-6 py-3 text-sm font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                            >
+                                Reset
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="flex-1 py-3 rounded-xl bg-[#c47a30] hover:bg-[#a86428] disabled:bg-neutral-400 text-white font-semibold text-sm shadow-lg transition-all cursor-pointer"
+                            >
+                                {isSubmitting ? "Searching..." : "Find Chef"}
+                            </button>
+                        </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Field label="Guests" error={errors.guests?.message}>
-                            <Controller
-                                name="guests"
-                                control={control}
-                                rules={{ required: "Required" }}
-                                render={({ field }) => (
-                                    <CustomSelect
-                                        {...field}
-                                        placeholder="Range"
-                                        options={GUEST_OPTIONS}
-                                    />
-                                )}
-                            />
-                        </Field>
-
-                        <Field label="Budget" error={errors.budget?.message}>
-                            <Controller
-                                name="budget"
-                                control={control}
-                                rules={{ required: "Required" }}
-                                render={({ field }) => (
-                                    <CustomSelect
-                                        {...field}
-                                        placeholder="Amount"
-                                        options={BUDGET_OPTIONS}
-                                    />
-                                )}
-                            />
-                        </Field>
-                    </div>
-
-                    <Field label="Special Requests">
-                        <textarea
-                            {...register("special")}
-                            placeholder="Allergies, themes..."
-                            rows={3}
-                            className="w-full text-sm p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none resize-none dark:text-white"
-                        />
-                    </Field>
-
-                    <div className="pt-2 flex gap-3">
-                        <button
-                            type="button"
-                            onClick={() => reset()}
-                            className="px-6 py-3 text-sm font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
-                        >
-                            Reset
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="flex-1 py-3 rounded-xl bg-[#c47a30] hover:bg-[#a86428] disabled:bg-neutral-400 text-white font-semibold text-sm shadow-lg transition-all"
-                        >
-                            {isSubmitting ? "Searching..." : "Find Chef"}
-                        </button>
-                    </div>
-
-                    {isSubmitSuccessful && (
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-center text-green-600 text-xs font-medium"
-                        >
-                            ✓ Preferences saved. Loading chefs...
-                        </motion.p>
-                    )}
-                </form>
+                        {isSubmitSuccessful && !isSubmitting && (
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="text-center text-green-600 text-xs font-medium"
+                            >
+                                ✓ Preferences saved. Loading chefs...
+                            </motion.p>
+                        )}
+                    </form>
+                </div>
             </div>
         </motion.div>
     );

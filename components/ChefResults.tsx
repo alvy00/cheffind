@@ -1,34 +1,115 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { Chef } from "@/lib/types";
 import { motion } from "framer-motion";
+import { Star, Award, Clock, Banknote, Utensils } from "lucide-react";
 
 export default function ChefResults({
     data,
     onBack,
 }: {
-    data: any;
+    data: Chef[];
     onBack: () => void;
 }) {
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-neutral-900 p-8 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full max-w-6xl mx-auto flex flex-col items-center gap-8"
         >
-            <h2 className="text-2xl font-serif font-bold dark:text-white mb-4">
-                Recommended Chefs
-            </h2>
+            {/* Responsive Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full items-center md:mt-2">
+                {data.map((chef, index) => {
+                    const isRecommended = index === 1; // Middle card highlight
 
-            <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-xl mb-6 text-sm dark:text-neutral-300">
-                {/* Map through your results here */}
-                <p>Gemini found 3 chefs matching your criteria!</p>
+                    return (
+                        <motion.div
+                            key={chef.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className={`relative flex flex-col p-6 rounded-2xl border transition-all duration-300 ${
+                                isRecommended
+                                    ? "bg-neutral-800 border-orange-500/50 shadow-[0_0_30px_rgba(251,146,60,0.15)] md:scale-110 z-20"
+                                    : "bg-neutral-900/50 border-neutral-800 md:scale-95 z-10"
+                            }`}
+                        >
+                            {isRecommended && (
+                                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 text-black text-[10px] font-bold uppercase tracking-widest py-1 px-3 rounded-full">
+                                    Best Value
+                                </span>
+                            )}
+
+                            <div className="mb-4">
+                                <div className="flex justify-between items-start mb-1">
+                                    <h3 className="text-xl font-serif font-bold text-[#f5ece0]">
+                                        {chef.name}
+                                    </h3>
+                                    <div className="flex items-center gap-1 text-orange-400 text-sm font-bold">
+                                        <Star size={14} fill="currentColor" />
+                                        {chef.rating}
+                                    </div>
+                                </div>
+                                <p className="text-orange-400/80 text-xs font-medium uppercase tracking-wider">
+                                    {chef.cuisineSpeciality} Specialist
+                                </p>
+                            </div>
+
+                            <div className="space-y-3 mb-6 text-sm text-[#f5ece0]/70">
+                                <div className="flex items-center gap-3">
+                                    <Clock
+                                        size={16}
+                                        className="text-orange-400/50"
+                                    />
+                                    <span>{chef.experience} Experience</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <Utensils
+                                        size={16}
+                                        className="text-orange-400/50"
+                                    />
+                                    <span>{chef.speciality}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <Banknote
+                                        size={16}
+                                        className="text-orange-400/50"
+                                    />
+                                    <span className="text-[#f5ece0] font-semibold">
+                                        ৳{chef.pricePerSession.toLocaleString()}{" "}
+                                        / session
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="mt-auto pt-4 border-t border-[#f5ece0]/10">
+                                <p className="text-xs italic leading-relaxed text-[#f5ece0]/50">
+                                    &ldquo;{chef.opinion}&rdquo;
+                                </p>
+                            </div>
+
+                            <button
+                                className={`mt-6 w-full py-3 rounded-xl font-bold transition-all ${
+                                    isRecommended
+                                        ? "bg-orange-500 text-black hover:bg-orange-400 shadow-lg shadow-orange-500/20"
+                                        : "bg-neutral-800 text-[#f5ece0] hover:bg-neutral-700 border border-neutral-700"
+                                }`}
+                            >
+                                Book Now
+                            </button>
+                        </motion.div>
+                    );
+                })}
             </div>
 
             <button
                 onClick={onBack}
-                className="px-8 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all font-medium"
+                className="mt-4 text-[#f5ece0]/40 hover:text-orange-400 transition-colors text-sm flex items-center gap-2 group cursor-pointer"
             >
-                ← Back to Preferences
+                <span className="group-hover:-translate-x-1 transition-transform">
+                    ←
+                </span>
+                Adjust My Preferences
             </button>
         </motion.div>
     );

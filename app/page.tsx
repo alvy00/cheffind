@@ -6,8 +6,8 @@ import ChefResults from "@/components/ChefResults";
 import CustomerForm from "@/components/CustomerForm";
 import Background from "@/components/misc/Background";
 import FSLoader from "@/components/misc/FSLoader";
+import axios from "axios";
 import { useEffect, useState } from "react";
-import { CHEFS } from "@/lib/constants";
 
 export default function Home() {
     const [loading, setLoading] = useState(true);
@@ -28,9 +28,11 @@ export default function Home() {
         }
     }, []);
 
-    const handleFormSubmit = async (formData: any) => {
+    const handleFormSubmit = async (data: any) => {
         try {
-            setChefData({ results: "Successful match!" });
+            const res = await axios.post("/api/recommend", { data });
+            console.log(res.data.recommendedChefs);
+            setChefData(res.data.recommendedChefs);
             setShowResults(true);
         } catch (error) {
             console.error("Submission failed", error);

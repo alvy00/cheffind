@@ -7,7 +7,6 @@ export const CHEFS = [
         speciality: "Large parties & Weddings",
         rating: 4.9,
         pricePerSession: 2500,
-        image: "/chefs/rafiq.jpg",
     },
     {
         id: 2,
@@ -163,9 +162,8 @@ export const CHEFS = [
         pricePerSession: 1700,
     },
 ];
-
 export const CUISINES = ["Bengali", "Chinese", "Italian", "Continental", "BBQ"];
-export const DISH_ICONS = ["🍛", "🍜", "🍝", "🥩", "🍖"] as const;
+export const DISH_ICONS = ["🍛", "🍜", "🍝", "🥩", "🍖"];
 export const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Party catering"];
 export const GUEST_OPTIONS = ["1–5", "6–15", "16–30", "30+"];
 export const BUDGET_OPTIONS = [

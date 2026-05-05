@@ -182,14 +182,14 @@ export default function CustomerForm({
                             <button
                                 type="button"
                                 onClick={() => reset()}
-                                className="px-6 py-3 text-sm font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                                className="px-6 py-3 text-sm font-medium rounded-xl border border-neutral-200 dark:border-neutral-700 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
                             >
                                 Reset
                             </button>
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="flex-1 py-3 rounded-xl bg-[#c47a30] hover:bg-[#a86428] disabled:bg-neutral-400 text-white font-semibold text-sm shadow-lg transition-all"
+                                className="flex-1 py-3 rounded-xl bg-[#c47a30] hover:bg-[#a86428] disabled:bg-neutral-400 text-white font-semibold text-sm shadow-lg transition-all cursor-pointer"
                             >
                                 {isSubmitting ? "Searching..." : "Find Chef"}
                             </button>

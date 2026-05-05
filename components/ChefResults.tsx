@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { useState } from "react"; // Added useState
 import { Chef } from "@/lib/types";
 import { motion } from "framer-motion";
-import { Star, Award, Clock, Banknote, Utensils } from "lucide-react";
+import { Star, Clock, Banknote, Utensils, Check } from "lucide-react"; // Added Check icon
 
 export default function ChefResults({
     data,
@@ -11,32 +12,61 @@ export default function ChefResults({
     data: Chef[];
     onBack: () => void;
 }) {
+    // Track the ID of the booked chef
+    const [bookedChefId, setBookedChefId] = useState<string | number | null>(
+        null,
+    );
+
+    const handleBook = (chefId: string | number) => {
+        setBookedChefId(chefId);
+        // Add your booking API call or parent notification logic here
+        console.log(`Chef ${chefId} booked!`);
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="w-full max-w-6xl mx-auto flex flex-col items-center gap-8"
         >
-            {/* Responsive Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full items-center md:mt-2">
                 {data.map((chef, index) => {
-                    const isRecommended = index === 1; // Middle card highlight
+                    const isRecommended = index === 1;
+                    const isBooked = bookedChefId === chef.id;
+                    const isAnyChefBooked = bookedChefId !== null;
+                    const isDisabled = isAnyChefBooked && !isBooked;
 
                     return (
                         <motion.div
                             key={chef.id}
                             initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            animate={{
+                                opacity: isDisabled ? 0.5 : 1, // Dim disabled cards
+                                scale: isBooked
+                                    ? 1.05
+                                    : isRecommended
+                                      ? 1.1
+                                      : 0.95,
+                                y: 0,
+                            }}
                             transition={{ delay: index * 0.1 }}
                             className={`relative flex flex-col p-6 rounded-2xl border transition-all duration-300 ${
-                                isRecommended
-                                    ? "bg-neutral-800 border-orange-500/50 shadow-[0_0_30px_rgba(251,146,60,0.15)] md:scale-110 z-20"
-                                    : "bg-neutral-900/50 border-neutral-800 md:scale-95 z-10"
+                                isBooked
+                                    ? "border-green-500 bg-neutral-800 shadow-[0_0_30px_rgba(34,197,94,0.2)] z-30"
+                                    : isRecommended
+                                      ? "bg-neutral-800 border-orange-500/50 shadow-[0_0_30px_rgba(251,146,60,0.15)] z-20"
+                                      : "bg-neutral-900/50 border-neutral-800 z-10"
                             }`}
                         >
-                            {isRecommended && (
+                            {isRecommended && !isBooked && (
                                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 text-black text-[10px] font-bold uppercase tracking-widest py-1 px-3 rounded-full">
                                     Best Value
+                                </span>
+                            )}
+
+                            {isBooked && (
+                                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold uppercase tracking-widest py-1 px-3 rounded-full flex items-center gap-1">
+                                    <Check size={10} /> Confirmed
                                 </span>
                             )}
 
@@ -89,13 +119,19 @@ export default function ChefResults({
                             </div>
 
                             <button
+                                onClick={() => handleBook(chef.id)}
+                                disabled={isAnyChefBooked}
                                 className={`mt-6 w-full py-3 rounded-xl font-bold transition-all ${
-                                    isRecommended
-                                        ? "bg-orange-500 text-black hover:bg-orange-400 shadow-lg shadow-orange-500/20"
-                                        : "bg-neutral-800 text-[#f5ece0] hover:bg-neutral-700 border border-neutral-700"
+                                    isBooked
+                                        ? "bg-green-600 text-white cursor-default"
+                                        : isDisabled
+                                          ? "bg-neutral-800 text-neutral-600 border border-neutral-700 cursor-not-allowed opacity-50"
+                                          : isRecommended
+                                            ? "bg-orange-500 text-black hover:bg-orange-400 shadow-lg shadow-orange-500/20 cursor-pointer"
+                                            : "bg-neutral-800 text-[#f5ece0] hover:bg-neutral-700 border border-neutral-700 cursor-pointer"
                                 }`}
                             >
-                                Book Now
+                                {isBooked ? "Booked" : "Book Now"}
                             </button>
                         </motion.div>
                     );
@@ -104,9 +140,13 @@ export default function ChefResults({
 
             <button
                 onClick={onBack}
-                className="mt-4 text-[#f5ece0]/40 hover:text-orange-400 transition-colors text-sm flex items-center gap-2 group cursor-pointer"
+                className={`mt-4 text-sm flex items-center gap-2 group transition-colors 
+                        text-[#f5ece0]/40 hover:text-orange-400 cursor-pointer
+                }`}
             >
-                <span className="group-hover:-translate-x-1 transition-transform">
+                <span
+                    className={"group-hover:-translate-x-1 transition-transfor"}
+                >
                     ←
                 </span>
                 Adjust My Preferences

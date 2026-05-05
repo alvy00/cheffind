@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react"; // Added useState
+import { useState } from "react";
 import { Chef } from "@/lib/types";
 import { motion } from "framer-motion";
-import { Star, Clock, Banknote, Utensils, Check } from "lucide-react"; // Added Check icon
+import { Star, Clock, Banknote, Utensils, Check } from "lucide-react";
 
 export default function ChefResults({
     data,
@@ -12,14 +12,12 @@ export default function ChefResults({
     data: Chef[];
     onBack: () => void;
 }) {
-    // Track the ID of the booked chef
     const [bookedChefId, setBookedChefId] = useState<string | number | null>(
         null,
     );
 
     const handleBook = (chefId: string | number) => {
         setBookedChefId(chefId);
-        // Add your booking API call or parent notification logic here
         console.log(`Chef ${chefId} booked!`);
     };
 
@@ -41,7 +39,7 @@ export default function ChefResults({
                             key={chef.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{
-                                opacity: isDisabled ? 0.5 : 1, // Dim disabled cards
+                                opacity: isDisabled ? 0.5 : 1,
                                 scale: isBooked
                                     ? 1.05
                                     : isRecommended

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -13,6 +14,7 @@ import {
 import { ProgressLoader } from "./misc/ProgressLoader";
 import { CustomSelect } from "./ui/CustomSelect";
 import { VisualPanel } from "./ui/VisualPanel";
+import { Field } from "./ui/FormField";
 
 type FormValues = {
     cuisine: string;
@@ -208,34 +210,5 @@ export default function CustomerForm({
                 </div>
             </div>
         </motion.div>
-    );
-}
-
-/**
- * Reusable Field Wrapper
- */
-function Field({
-    label,
-    children,
-    error,
-}: {
-    label: string;
-    children: React.ReactNode;
-    error?: string;
-}) {
-    return (
-        <div className="flex flex-col gap-1.5">
-            <div className="flex justify-between items-center px-1">
-                <label className="text-[10px] uppercase tracking-widest font-bold text-neutral-400 dark:text-neutral-500">
-                    {label}
-                </label>
-                {error && (
-                    <span className="text-[9px] text-red-500 font-bold uppercase">
-                        {error}
-                    </span>
-                )}
-            </div>
-            {children}
-        </div>
     );
 }
